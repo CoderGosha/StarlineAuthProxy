@@ -23,15 +23,19 @@ def __get_slnet_token(slid_token) -> (str, int):
         logging.info('response info: {}'.format(r))
         logging.info('response data: {}'.format(response))
         slnet_token = ""
+        user_id = ""
         if "slnet" in r.cookies:
             slnet_token = r.cookies["slnet"]
         logging.info('slnet token: {}'.format(slnet_token))
         message = ""
         if "codestring" in response:
             message = response["codestring"]
-        return slnet_token, r.status_code, message
+
+        if "user_id" in response:
+            user_id = response["user_id"]
+        return slnet_token, r.status_code, message, user_id
     else:
-        return None, r.status_code, r.text
+        return None, r.status_code, r.text, ""
 
 
 @app.route('/auth.slid')
@@ -40,10 +44,11 @@ def get_slnet_token():  # put application's code here
     if slid_token is None:
         return "", 400
 
-    slnet_token, status_code, message = __get_slnet_token(slid_token)
+    slnet_token, status_code, message, user_id = __get_slnet_token(slid_token)
     result = {
         "slnet_token": slnet_token,
-        "message" : message
+        "user_id": user_id,
+        "message": message
     }
     return result, status_code
 
