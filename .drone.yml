@@ -19,4 +19,4 @@ steps:
 
 - name: publish
   commands:
-  - docker run -d -v /opt/starline_poxy/logs:/logs/ --restart=no -m=350m --memory-swap=350m --cpus=".5" --pids-limit=200 -p 5005:5000 -e FLASK_RUN_HOST="0.0.0.0" --name starlineauthproxy starlineauthproxy;
+  - docker run -d -v /opt/starline_poxy/logs:/log/ --restart=no -m=350m --memory-swap=350m --cpus=".5" --pids-limit=200 -p 5005:5000 -e FLASK_RUN_HOST="0.0.0.0" --name starlineauthproxy starlineauthproxy;
