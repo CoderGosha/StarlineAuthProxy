@@ -4,3 +4,5 @@
 /.idea/inspectionProfiles/Project_Default.xml
 /.idea/StarlineAuthProxy.iml
 /.idea/vcs.xml
+/log/
+/requests/http-client.private.env.json

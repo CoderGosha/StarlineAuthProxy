@@ -1,0 +1,22 @@
+POST {{url}}/sync.logs
+Authorization: Basic {{username}} {{password}}
+Content-Type: application/json
+
+{
+  "app_name": "test",
+  "request_id": 1,
+  "logs": [
+    {
+      "data_time": "2022-22-11",
+      "log_level": 0,
+      "message": "test1"
+    },
+    {
+      "data_time": "2022-22-11",
+      "log_level": 0,
+      "message": "test2"
+    }
+  ]
+}
+
+###

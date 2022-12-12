@@ -1,9 +1,25 @@
+import json
 import logging
+from types import SimpleNamespace
+from flask_httpauth import HTTPBasicAuth
+from werkzeug.security import check_password_hash, generate_password_hash
 
 import requests
-from flask import Flask, request
+from flask import Flask, request, abort
+
+from loggerinitializer import initialize_logger
+from models import SyncLogs
 
 app = Flask(__name__)
+initialize_logger("log")
+logging.info("Start proxy api")
+
+auth = HTTPBasicAuth()
+
+users = {
+    "admin": generate_password_hash("34567890erdfghjkljhgfdxcvbnjkliuytrdf"),
+    "starline": generate_password_hash("erdfghjkljhgfdxcvbnjkliuytrdf")
+}
 
 
 def __get_slnet_token(slid_token) -> (str, int):
@@ -38,6 +54,13 @@ def __get_slnet_token(slid_token) -> (str, int):
         return None, r.status_code, r.text, ""
 
 
+@auth.verify_password
+def verify_password(username, password):
+    if username in users and \
+            check_password_hash(users.get(username), password):
+        return username
+
+
 @app.route('/auth.slid')
 def get_slnet_token():  # put application's code here
     slid_token = request.args.get('slid_token', default=None, type=str)
@@ -51,6 +74,16 @@ def get_slnet_token():  # put application's code here
         "message": message
     }
     return result, status_code
+
+
+@app.route('/sync.logs', methods=['POST'])
+@auth.login_required
+def sync_logs():
+    if request.json:
+        logs = SyncLogs(**request.json)
+        app.logger.info(logs)
+        return "ok"
+    abort(400)
 
 
 if __name__ == '__main__':
